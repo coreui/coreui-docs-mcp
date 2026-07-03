@@ -42,12 +42,12 @@ Add to the MCP servers config (`claude_desktop_config.json`, `.cursor/mcp.json`,
 
 ## Configuration
 
-| Flag                 | Env                       | Default               | Description                                                             |
-| -------------------- | ------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue` | Enabled editions (comma-separated). The first is the default for tools. |
-| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`   | Documentation origin.                                                   |
-| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                 | Cache freshness window.                                                 |
-| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir          | On-disk cache location.                                                 |
+| Flag                 | Env                       | Default               | Description                                                                                                                            |
+| -------------------- | ------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue` | Enabled editions (comma-separated). The first is the default for tools.                                                                |
+| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`   | Origin of the CoreUI site. The `/<framework>/docs` path is appended automatically — override only for a staging or self-hosted mirror. |
+| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                 | Cache freshness window.                                                                                                                |
+| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir          | On-disk cache location.                                                                                                                |
 
 ## Tools
 
