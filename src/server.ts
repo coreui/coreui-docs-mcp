@@ -16,13 +16,17 @@ function fail(error: unknown): TextResult {
 
 export function createServer(docs: DocsService, version: string): McpServer {
   const server = new McpServer({ name: 'coreui-docs-mcp', version })
-  const frameworkArg = z.enum(FRAMEWORKS).optional().describe(`CoreUI edition. Enabled: ${docs.frameworks().join(', ')}. Defaults to the first.`)
+  const frameworkArg = z
+    .enum(FRAMEWORKS)
+    .optional()
+    .describe(`CoreUI edition. Enabled: ${docs.frameworks().join(', ')}. Defaults to the first.`)
 
   server.registerTool(
     'list_components',
     {
       title: 'List CoreUI documentation pages',
-      description: 'List CoreUI documentation pages (components, forms, layout, utilities...) for a framework, optionally filtered by section or a substring.',
+      description:
+        'List CoreUI documentation pages (components, forms, layout, utilities...) for a framework, optionally filtered by section or a substring.',
       inputSchema: {
         framework: frameworkArg,
         section: z.string().optional().describe('Filter by section header, e.g. "Components", "Forms".'),
@@ -43,7 +47,9 @@ export function createServer(docs: DocsService, version: string): McpServer {
         if (filtered.length === 0) {
           return text(`No pages found for ${fw}${section ? ` in section "${section}"` : ''}${query ? ` matching "${query}"` : ''}.`)
         }
-        const lines = filtered.map((entry) => `- **${entry.title}** (\`${entry.slug}\`)${entry.description ? ` — ${entry.description}` : ''}`)
+        const lines = filtered.map(
+          (entry) => `- **${entry.title}** (\`${entry.slug}\`)${entry.description ? ` — ${entry.description}` : ''}`,
+        )
         return text(`CoreUI ${fw} — ${filtered.length} page(s):\n\n${lines.join('\n')}`)
       } catch (error) {
         return fail(error)
@@ -69,7 +75,9 @@ export function createServer(docs: DocsService, version: string): McpServer {
         if (results.length === 0) {
           return text(`No results for "${query}" in ${fw}.`)
         }
-        const lines = results.map((entry) => `- **${entry.title}** — ${entry.url}\n  \`${entry.slug}\`${entry.description ? ` — ${entry.description}` : ''}`)
+        const lines = results.map(
+          (entry) => `- **${entry.title}** — ${entry.url}\n  \`${entry.slug}\`${entry.description ? ` — ${entry.description}` : ''}`,
+        )
         return text(`Top ${results.length} result(s) for "${query}" in ${fw}:\n\n${lines.join('\n')}`)
       } catch (error) {
         return fail(error)
@@ -103,7 +111,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
     'get_component_api',
     {
       title: 'Get CoreUI component API',
-      description: 'Get the structured API (props, events, slots) for a CoreUI component. Best for React and Vue; Bootstrap components document options inline.',
+      description:
+        'Get the structured API (props, events, slots) for a CoreUI component. Best for React and Vue; Bootstrap components document options inline.',
       inputSchema: {
         component: z.string().min(1).describe('Component name, e.g. "Avatar", "CAvatar", or "multi-select".'),
         framework: frameworkArg,
@@ -124,7 +133,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
     'get_cross_framework_links',
     {
       title: 'Get cross-framework documentation links',
-      description: 'Get the documentation URLs for a component across every CoreUI framework it exists in (Angular, Bootstrap, React, Vue).',
+      description:
+        'Get the documentation URLs for a component across every CoreUI framework it exists in (Angular, Bootstrap, React, Vue).',
       inputSchema: {
         component: z.string().min(1).describe('Component name, e.g. "accordion" or "CAccordion".'),
       },

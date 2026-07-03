@@ -47,7 +47,11 @@ export function renderApiData(raw: unknown): string {
   if (data.props?.length) {
     out.push('### Props', '', '| Name | Type | Default | Description |', '| --- | --- | --- | --- |')
     for (const prop of data.props) {
-      const description = [prop.description, prop.since ? `_Since ${prop.since}_` : '', prop.deprecated ? `**Deprecated:** ${prop.deprecated}` : '']
+      const description = [
+        prop.description,
+        prop.since ? `_Since ${prop.since}_` : '',
+        prop.deprecated ? `**Deprecated:** ${prop.deprecated}` : '',
+      ]
         .filter(Boolean)
         .join(' ')
       out.push(`| \`${prop.name}\` | ${cell(prop.type)} | ${cell(prop.default)} | ${cell(description)} |`)

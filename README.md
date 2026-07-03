@@ -42,27 +42,29 @@ Add to the MCP servers config (`claude_desktop_config.json`, `.cursor/mcp.json`,
 
 ## Configuration
 
-| Flag | Env | Default | Description |
-| --- | --- | --- | --- |
-| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS` | `bootstrap,react,vue` | Enabled editions (comma-separated). The first is the default for tools. |
-| `--base-url <url>` | `COREUI_DOCS_BASE_URL` | `https://coreui.io` | Documentation origin. |
-| `--ttl <minutes>` | `COREUI_DOCS_TTL_MINUTES` | `360` | Cache freshness window. |
-| — | `COREUI_DOCS_CACHE_DIR` | OS cache dir | On-disk cache location. |
+| Flag                 | Env                       | Default               | Description                                                             |
+| -------------------- | ------------------------- | --------------------- | ----------------------------------------------------------------------- |
+| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue` | Enabled editions (comma-separated). The first is the default for tools. |
+| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`   | Documentation origin.                                                   |
+| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                 | Cache freshness window.                                                 |
+| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir          | On-disk cache location.                                                 |
 
 ## Tools
 
-| Tool | Description |
-| --- | --- |
-| `list_components` | List documentation pages for a framework, optionally filtered by section or substring. |
-| `search_docs` | Search the docs and return the best matching pages with URLs. |
-| `get_doc_page` | Fetch the full Markdown of a page by slug, component name, or URL. |
-| `get_component_api` | Structured API (props/events/slots) for a component. Best for React and Vue. |
-| `get_cross_framework_links` | Documentation URLs for a component across every CoreUI framework. |
+| Tool                        | Description                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `list_components`           | List documentation pages for a framework, optionally filtered by section or substring. |
+| `search_docs`               | Search the docs and return the best matching pages with URLs.                          |
+| `get_doc_page`              | Fetch the full Markdown of a page by slug, component name, or URL.                     |
+| `get_component_api`         | Structured API (props/events/slots) for a component. Best for React and Vue.           |
+| `get_cross_framework_links` | Documentation URLs for a component across every CoreUI framework.                      |
 
 ## Development
 
 ```bash
 yarn install
+yarn lint
+yarn format
 yarn typecheck
 yarn test
 yarn build

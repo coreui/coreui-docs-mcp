@@ -65,8 +65,7 @@ export class DocsService {
       .replace(new RegExp(`^/${framework}/docs/`), '')
       .replace(/\/$/, '')
       .replace(/\.md$/, '')
-    const entry =
-      entries.find((item) => item.slug === normalizedSlug) ?? resolveComponent(entries, normalizedSlug)
+    const entry = entries.find((item) => item.slug === normalizedSlug) ?? resolveComponent(entries, normalizedSlug)
     if (!entry) {
       throw new Error(`No documentation page found for "${slugOrUrl}" in ${framework}`)
     }
@@ -94,7 +93,9 @@ export class DocsService {
 
     const index = await this.getApiIndex(framework)
     if (index) {
-      const key = Object.keys(index).find((name) => name.toLowerCase() === `c${component}`.toLowerCase() || name.toLowerCase() === component.toLowerCase())
+      const key = Object.keys(index).find(
+        (name) => name.toLowerCase() === `c${component}`.toLowerCase() || name.toLowerCase() === component.toLowerCase(),
+      )
       if (key) {
         return { entry, source: 'api.json', markdown: renderApiData(index[key]) }
       }
