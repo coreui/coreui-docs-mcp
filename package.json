@@ -12,10 +12,10 @@
     "vue"
   ],
   "homepage": "https://coreui.io",
-  "bugs": "https://github.com/coreui/docs-mcp/issues",
+  "bugs": "https://github.com/coreui/coreui-docs-mcp/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coreui/docs-mcp.git"
+    "url": "git+https://github.com/coreui/coreui-docs-mcp.git"
   },
   "license": "MIT",
   "author": "CoreUI <support@coreui.io> (https://coreui.io)",
