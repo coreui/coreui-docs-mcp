@@ -1,0 +1,53 @@
+{
+  "name": "@coreui/docs-mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for CoreUI documentation (Bootstrap, React, Vue).",
+  "keywords": [
+    "coreui",
+    "mcp",
+    "model-context-protocol",
+    "documentation",
+    "bootstrap",
+    "react",
+    "vue"
+  ],
+  "homepage": "https://coreui.io",
+  "bugs": "https://github.com/coreui/docs-mcp/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreui/docs-mcp.git"
+  },
+  "license": "MIT",
+  "author": "CoreUI <support@coreui.io> (https://coreui.io)",
+  "type": "module",
+  "bin": {
+    "coreui-docs-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@coreui/internal-links": "5.2.0",
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.0",
+    "tsup": "8.5.1",
+    "tsx": "4.23.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  }
+}
