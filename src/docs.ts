@@ -1,5 +1,5 @@
 import { type DocEntry, parseLlms, resolveComponent } from './catalog.js'
-import { type Config, docsBase, type Framework } from './config.js'
+import { type Config, docsBase, docsPath, type Framework } from './config.js'
 import { HttpClient } from './http.js'
 import { crossFrameworkLinks } from './links.js'
 import { renderApiData } from './api.js'
@@ -38,7 +38,7 @@ export class DocsService {
         if (res.status !== 200) {
           throw new Error(`Failed to load catalog for ${framework} (HTTP ${res.status})`)
         }
-        return parseLlms(res.body, framework, this.config.origin)
+        return parseLlms(res.body, docsPath(this.config, framework), this.config.origin)
       })
       this.catalogs.set(framework, pending)
     }
@@ -60,9 +60,10 @@ export class DocsService {
 
   async getPage(framework: Framework, slugOrUrl: string): Promise<{ entry?: DocEntry; markdown: string }> {
     const entries = await this.getCatalog(framework)
+    const prefix = docsPath(this.config, framework).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const normalizedSlug = slugOrUrl
       .replace(/^https?:\/\/[^/]+/, '')
-      .replace(new RegExp(`^/${framework}/docs/`), '')
+      .replace(new RegExp(`^${prefix}/`), '')
       .replace(/\/$/, '')
       .replace(/\.md$/, '')
     const entry = entries.find((item) => item.slug === normalizedSlug) ?? resolveComponent(entries, normalizedSlug)

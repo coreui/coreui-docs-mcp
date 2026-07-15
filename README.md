@@ -5,7 +5,9 @@ official **CoreUI documentation** into your AI coding tools. Ask your assistant 
 to use a CoreUI component and it answers from the current docs — components, props,
 events, slots, and examples — instead of stale training data.
 
-Covers **Bootstrap (vanilla), React, and Vue**. Angular is coming.
+Covers **Bootstrap (vanilla), React, Vue, and Angular**. Points at the main
+component-library docs by default, and can be repointed at a standalone product's
+docs (e.g. CoreUI Data Grid) via the path options below.
 
 The server reads the live documentation from `coreui.io` on demand and caches it
 locally, so it always reflects the deployed docs without an update.
@@ -44,10 +46,24 @@ Add to the MCP servers config (`claude_desktop_config.json`, `.cursor/mcp.json`,
 
 | Flag                 | Env                       | Default               | Description                                                                                                                            |
 | -------------------- | ------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue` | Enabled editions (comma-separated). The first is the default for tools.                                                                |
-| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`   | Origin of the CoreUI site. The `/<framework>/docs` path is appended automatically — override only for a staging or self-hosted mirror. |
-| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                 | Cache freshness window.                                                                                                                |
-| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir          | On-disk cache location.                                                                                                                |
+| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue`  | Enabled editions (comma-separated). `angular` is available but off by default. The first is the default for tools.                     |
+| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`    | Origin of the CoreUI site. Override for a staging or self-hosted mirror.                                                               |
+| `--base-path <tmpl>` | `COREUI_DOCS_BASE_PATH`   | `/{framework}/docs`    | Path (after the origin) where a framework's docs live; `{framework}` is substituted. Set to e.g. `/data-grid/{framework}/docs`.        |
+| `--docs-path <map>`  | `COREUI_DOCS_PATHS`       | —                      | Per-framework path overrides, `fw=path` comma-separated. Wins over `--base-path`; use it where a slug breaks the template.             |
+| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                  | Cache freshness window.                                                                                                                |
+| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir           | On-disk cache location.                                                                                                                |
+
+### CoreUI Data Grid
+
+The Data Grid docs live under `/data-grid/…` and its vanilla edition has no
+framework segment, so point the server at them like this:
+
+```bash
+npx -y @coreui/docs-mcp \
+  --framework bootstrap,react,vue,angular \
+  --base-path /data-grid/{framework}/docs \
+  --docs-path bootstrap=/data-grid/docs
+```
 
 ## Tools
 
