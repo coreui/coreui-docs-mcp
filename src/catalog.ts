@@ -1,5 +1,3 @@
-import type { Framework } from './config.js'
-
 export interface DocEntry {
   title: string
   section: string
@@ -13,8 +11,8 @@ export interface DocEntry {
 const ENTRY_RE = /^-\s+\[(.+?)\]\((.+?)\)(?::\s*(.*))?$/
 const SECTION_RE = /^##\s+(.+?)\s*$/
 
-export function parseLlms(text: string, framework: Framework, origin: string): DocEntry[] {
-  const prefix = `/${framework}/docs/`
+export function parseLlms(text: string, basePath: string, origin: string): DocEntry[] {
+  const prefix = `${basePath}/`
   const entries: DocEntry[] = []
   let section = ''
 

@@ -19,7 +19,7 @@ const LLMS = `# CoreUI React.js documentation
 `
 
 describe('parseLlms', () => {
-  const entries = parseLlms(LLMS, 'react', 'https://coreui.io')
+  const entries = parseLlms(LLMS, '/react/docs', 'https://coreui.io')
 
   it('parses entries with section, slug, url and description', () => {
     expect(entries).toHaveLength(4)
@@ -41,7 +41,7 @@ describe('parseLlms', () => {
 })
 
 describe('resolveComponent', () => {
-  const entries = parseLlms(LLMS, 'react', 'https://coreui.io')
+  const entries = parseLlms(LLMS, '/react/docs', 'https://coreui.io')
 
   it.each([
     ['avatar', 'components/avatar'],
@@ -60,7 +60,7 @@ describe('resolveComponent', () => {
 })
 
 describe('scoreEntries', () => {
-  const entries = parseLlms(LLMS, 'react', 'https://coreui.io')
+  const entries = parseLlms(LLMS, '/react/docs', 'https://coreui.io')
 
   it('ranks exact title matches first', () => {
     const [first] = scoreEntries(entries, 'accordion', 5)
