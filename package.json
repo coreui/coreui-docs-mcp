@@ -1,6 +1,6 @@
 {
   "name": "@coreui/docs-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Model Context Protocol server for CoreUI documentation (Bootstrap, React, Vue).",
   "keywords": [
     "coreui",

@@ -4,7 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - Unreleased
+## [0.2.0] - 2026-07-15
+
+### Added
+
+- Configurable docs paths so the server can point at a standalone product's docs
+  (e.g. CoreUI Data Grid): `--base-path`/`COREUI_DOCS_BASE_PATH` (a template with a
+  `{framework}` placeholder, default `/{framework}/docs`) and
+  `--docs-path`/`COREUI_DOCS_PATHS` (per-framework `fw=path` overrides).
+- `angular` is now an allowed framework; the default enabled set stays
+  `bootstrap,react,vue`.
+
+### Changed
+
+- `llms.txt` parsing and page-slug resolution derive from the configured docs path
+  instead of the framework name.
+
+## [0.1.0] - 2026-07-03
 
 ### Added
 
