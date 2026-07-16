@@ -1,11 +1,11 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
       interval: weekly
       day: tuesday
-      time: "12:00"
+      time: '12:00'
       timezone: Europe/Athens
     cooldown:
       default-days: 7
@@ -14,13 +14,13 @@ updates:
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/"
+    directory: '/'
     schedule:
       interval: weekly
       day: tuesday
-      time: "12:00"
+      time: '12:00'
       timezone: Europe/Athens
     open-pull-requests-limit: 10
     reviewers:
@@ -33,16 +33,16 @@ updates:
     rebase-strategy: disabled
     ignore:
       # linter churn — new rules break CI; bump deliberately
-      - dependency-name: "eslint*"
+      - dependency-name: 'eslint*'
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-      - dependency-name: "typescript-eslint"
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: 'typescript-eslint'
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
     groups:
       production-dependencies:
-        dependency-type: "production"
+        dependency-type: 'production'
       development-dependencies:
-        dependency-type: "development"
+        dependency-type: 'development'
