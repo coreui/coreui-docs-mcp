@@ -44,14 +44,14 @@ Add to the MCP servers config (`claude_desktop_config.json`, `.cursor/mcp.json`,
 
 ## Configuration
 
-| Flag                 | Env                       | Default               | Description                                                                                                                            |
-| -------------------- | ------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue`  | Enabled editions (comma-separated). `angular` is available but off by default. The first is the default for tools.                     |
-| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`    | Origin of the CoreUI site. Override for a staging or self-hosted mirror.                                                               |
-| `--base-path <tmpl>` | `COREUI_DOCS_BASE_PATH`   | `/{framework}/docs`    | Path (after the origin) where a framework's docs live; `{framework}` is substituted. Set to e.g. `/data-grid/{framework}/docs`.        |
-| `--docs-path <map>`  | `COREUI_DOCS_PATHS`       | —                      | Per-framework path overrides, `fw=path` comma-separated. Wins over `--base-path`; use it where a slug breaks the template.             |
-| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                  | Cache freshness window.                                                                                                                |
-| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir           | On-disk cache location.                                                                                                                |
+| Flag                 | Env                       | Default               | Description                                                                                                                     |
+| -------------------- | ------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--framework <list>` | `COREUI_DOCS_FRAMEWORKS`  | `bootstrap,react,vue` | Enabled editions (comma-separated). `angular` is available but off by default. The first is the default for tools.              |
+| `--base-url <url>`   | `COREUI_DOCS_BASE_URL`    | `https://coreui.io`   | Origin of the CoreUI site. Override for a staging or self-hosted mirror.                                                        |
+| `--base-path <tmpl>` | `COREUI_DOCS_BASE_PATH`   | `/{framework}/docs`   | Path (after the origin) where a framework's docs live; `{framework}` is substituted. Set to e.g. `/data-grid/{framework}/docs`. |
+| `--docs-path <map>`  | `COREUI_DOCS_PATHS`       | —                     | Per-framework path overrides, `fw=path` comma-separated. Wins over `--base-path`; use it where a slug breaks the template.      |
+| `--ttl <minutes>`    | `COREUI_DOCS_TTL_MINUTES` | `360`                 | Cache freshness window.                                                                                                         |
+| —                    | `COREUI_DOCS_CACHE_DIR`   | OS cache dir          | On-disk cache location.                                                                                                         |
 
 ### CoreUI Data Grid
 
@@ -78,12 +78,12 @@ npx -y @coreui/docs-mcp \
 ## Development
 
 ```bash
-yarn install
-yarn lint
-yarn format
-yarn typecheck
-yarn test
-yarn build
+npm install
+npm run lint
+npm run format
+npm run typecheck
+npm test
+npm run build
 ```
 
 ## License
