@@ -19,17 +19,28 @@ export interface HttpClientOptions {
   ttlMs: number
   fetchImpl?: typeof fetch
   userAgent?: string
+  /** Abort a request that has not responded within this many ms. */
+  timeoutMs?: number
+  /** Reject a response body larger than this many bytes. */
+  maxBytes?: number
 }
+
+const DEFAULT_TIMEOUT_MS = 15_000
+const DEFAULT_MAX_BYTES = 10 * 1024 * 1024
 
 export class HttpClient {
   private readonly memory = new Map<string, CacheEntry>()
   private readonly inflight = new Map<string, Promise<DocResponse>>()
   private readonly fetchImpl: typeof fetch
   private readonly userAgent: string
+  private readonly timeoutMs: number
+  private readonly maxBytes: number
 
   constructor(private readonly options: HttpClientOptions) {
     this.fetchImpl = options.fetchImpl ?? fetch
     this.userAgent = options.userAgent ?? 'coreui-docs-mcp'
+    this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS
+    this.maxBytes = options.maxBytes ?? DEFAULT_MAX_BYTES
   }
 
   async get(url: string): Promise<DocResponse> {
@@ -54,7 +65,11 @@ export class HttpClient {
       if (cached?.etag) {
         headers['if-none-match'] = cached.etag
       }
-      const response = await this.fetchImpl(url, { headers, redirect: 'follow' })
+      const response = await this.fetchImpl(url, {
+        headers,
+        redirect: 'follow',
+        signal: AbortSignal.timeout(this.timeoutMs),
+      })
 
       if (response.status === 304 && cached) {
         const refreshed: CacheEntry = { ...cached, ts: Date.now() }
@@ -62,7 +77,7 @@ export class HttpClient {
         return { status: cached.status, body: cached.body }
       }
 
-      const body = await response.text()
+      const body = await this.readBody(response, url)
       if (response.ok) {
         const entry: CacheEntry = {
           ts: Date.now(),
@@ -80,6 +95,40 @@ export class HttpClient {
       }
       throw error
     }
+  }
+
+  private async readBody(response: Response, url: string): Promise<string> {
+    const declared = Number(response.headers.get('content-length'))
+    if (Number.isFinite(declared) && declared > this.maxBytes) {
+      throw new Error(`Response from ${url} exceeds ${this.maxBytes} bytes (content-length ${declared})`)
+    }
+
+    if (!response.body) {
+      const text = await response.text()
+      if (Buffer.byteLength(text) > this.maxBytes) {
+        throw new Error(`Response from ${url} exceeds ${this.maxBytes} bytes`)
+      }
+      return text
+    }
+
+    const reader = response.body.getReader()
+    const chunks: Uint8Array[] = []
+    let total = 0
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break
+      }
+      if (value) {
+        total += value.byteLength
+        if (total > this.maxBytes) {
+          await reader.cancel()
+          throw new Error(`Response from ${url} exceeds ${this.maxBytes} bytes`)
+        }
+        chunks.push(value)
+      }
+    }
+    return Buffer.concat(chunks).toString('utf8')
   }
 
   private diskPath(url: string): string {

@@ -34,13 +34,20 @@ export class DocsService {
   async getCatalog(framework: Framework): Promise<DocEntry[]> {
     let pending = this.catalogs.get(framework)
     if (!pending) {
-      pending = this.http.get(`${docsBase(this.config, framework)}/llms.txt`).then((res) => {
+      const request = this.http.get(`${docsBase(this.config, framework)}/llms.txt`).then((res) => {
         if (res.status !== 200) {
           throw new Error(`Failed to load catalog for ${framework} (HTTP ${res.status})`)
         }
         return parseLlms(res.body, docsPath(this.config, framework), this.config.origin)
       })
-      this.catalogs.set(framework, pending)
+      // Evict a rejected promise so a transient failure doesn't poison the cache.
+      request.catch(() => {
+        if (this.catalogs.get(framework) === request) {
+          this.catalogs.delete(framework)
+        }
+      })
+      this.catalogs.set(framework, request)
+      pending = request
     }
     return pending
   }
@@ -76,13 +83,21 @@ export class DocsService {
   private async getApiIndex(framework: Framework): Promise<Record<string, unknown> | null> {
     let pending = this.apiIndex.get(framework)
     if (!pending) {
-      pending = this.http
+      const request = this.http
         .get(`${docsBase(this.config, framework)}/api.json`)
         .then((res) => (res.status === 200 ? (JSON.parse(res.body) as Record<string, unknown>) : null))
-        .catch(() => null)
-      this.apiIndex.set(framework, pending)
+      // Evict on a thrown error (network/parse) so a transient failure retries;
+      // a legitimate "no api.json" (non-200 → null) stays cached.
+      request.catch(() => {
+        if (this.apiIndex.get(framework) === request) {
+          this.apiIndex.delete(framework)
+        }
+      })
+      this.apiIndex.set(framework, request)
+      pending = request
     }
-    return pending
+    // Callers fall back gracefully to api.md / page on a missing or failed index.
+    return pending.catch(() => null)
   }
 
   async getComponentApi(framework: Framework, component: string): Promise<ApiResult> {

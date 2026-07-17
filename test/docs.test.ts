@@ -64,6 +64,34 @@ describe('DocsService', () => {
     expect(entries.map((entry) => entry.slug)).toContain('components/avatar')
   })
 
+  it('retries the catalog after a transient failure instead of caching the rejection', async () => {
+    const cacheDir = await mkdtemp(join(tmpdir(), 'coreui-docs-mcp-test-'))
+    const config = loadConfig(['--framework', 'react'], {
+      COREUI_DOCS_CACHE_DIR: cacheDir,
+    } as NodeJS.ProcessEnv)
+
+    let calls = 0
+    const flakyFetch = (async (input: string | URL) => {
+      const url = typeof input === 'string' ? input : input.toString()
+      calls += 1
+      const failing = url.endsWith('/llms.txt') && calls === 1
+      return {
+        ok: !failing,
+        status: failing ? 500 : 200,
+        headers: new Map<string, string>() as unknown as Headers,
+        text: async () => (failing ? '' : LLMS),
+      }
+    }) as unknown as typeof fetch
+
+    const http = new HttpClient({ cacheDir, ttlMs: 60_000, fetchImpl: flakyFetch })
+    const docs = new DocsService(config, http)
+
+    await expect(docs.getCatalog('react')).rejects.toThrow(/Failed to load catalog/)
+
+    const entries = await docs.getCatalog('react')
+    expect(entries.map((entry) => entry.slug)).toContain('components/avatar')
+  })
+
   it('fetches a page by component name', async () => {
     const docs = await makeService({
       [`${base}/llms.txt`]: { body: LLMS },
