@@ -4,10 +4,9 @@ import { join } from 'node:path'
 export const FRAMEWORKS = ['bootstrap', 'react', 'vue', 'angular'] as const
 export type Framework = (typeof FRAMEWORKS)[number]
 
-// Enabled by default when `--framework` is omitted. Angular is allowed (so a
-// standalone product like Data Grid can opt into it) but stays out of the default
-// set, which mirrors the main component-library docs currently on the engine.
-export const DEFAULT_FRAMEWORKS: readonly Framework[] = ['bootstrap', 'react', 'vue']
+// Enabled by default when `--framework` is omitted — every edition whose docs serve
+// the Markdown and llms endpoints this reads.
+export const DEFAULT_FRAMEWORKS: readonly Framework[] = ['angular', 'bootstrap', 'react', 'vue']
 
 // Path (after the origin) where a framework's docs live, with `{framework}`
 // substituted. The main library uses `/<framework>/docs`; a standalone product
