@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest'
 import { docsBase, docsPath, loadConfig } from '../src/config.js'
 
 describe('loadConfig frameworks', () => {
-  it('defaults to bootstrap, react, vue (angular excluded)', () => {
+  it('defaults to every edition', () => {
     const config = loadConfig([], {} as NodeJS.ProcessEnv)
-    expect(config.frameworks).toEqual(['bootstrap', 'react', 'vue'])
+    expect(config.frameworks).toEqual(['angular', 'bootstrap', 'react', 'vue'])
   })
 
-  it('allows angular when requested explicitly', () => {
+  it('narrows to the requested editions', () => {
     const config = loadConfig(['--framework', 'angular,react'], {} as NodeJS.ProcessEnv)
     expect(config.frameworks).toEqual(['angular', 'react'])
   })
