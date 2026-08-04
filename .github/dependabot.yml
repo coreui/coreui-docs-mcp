@@ -32,14 +32,18 @@ updates:
     versioning-strategy: increase
     rebase-strategy: disabled
     ignore:
+      # only minors and patches are automated; majors are coordinated upgrades taken
+      # by hand — a single unusable one (typescript 7, blocked by typescript-eslint's
+      # peer range) otherwise holds the whole group PR hostage
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
       # linter churn — new rules break CI; bump deliberately
       - dependency-name: 'eslint*'
         update-types:
-          - 'version-update:semver-major'
           - 'version-update:semver-minor'
       - dependency-name: 'typescript-eslint'
         update-types:
-          - 'version-update:semver-major'
           - 'version-update:semver-minor'
     groups:
       production-dependencies:
