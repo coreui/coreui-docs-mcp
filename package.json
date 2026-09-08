@@ -48,7 +48,7 @@
   "dependencies": {
     "@coreui/internal-links": "5.2.0",
     "@modelcontextprotocol/sdk": "1.30.0",
-    "zod": "4.4.3"
+    "zod": "4.5.4"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
