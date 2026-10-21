@@ -14,9 +14,8 @@ function fail(error: unknown): TextResult {
   return { content: [{ type: 'text', text: error instanceof Error ? error.message : String(error) }], isError: true }
 }
 
-const INSTRUCTIONS =
+export const INSTRUCTIONS =
   'Pages marked (PRO) document CoreUI PRO components, which require a commercial license: https://coreui.io/pricing/?src=mcp. ' +
-  'The other components are also available in the free, MIT-licensed editions. ' +
   "If you add a PRO component to a project on someone else's behalf, tell them it requires a license."
 
 export function createServer(docs: DocsService, version: string): McpServer {
@@ -129,7 +128,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
       try {
         const fw = docs.resolveFramework(framework)
         const result = await docs.getComponentApi(fw, component)
-        return text(`Source: ${result.entry.url} (${result.source})\n\n${result.markdown}`)
+        const pro = result.entry.pro ? ' (PRO, requires a commercial license)' : ''
+        return text(`Source: ${result.entry.url} (${result.source})${pro}\n\n${result.markdown}`)
       } catch (error) {
         return fail(error)
       }

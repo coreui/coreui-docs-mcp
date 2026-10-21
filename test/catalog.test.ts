@@ -12,6 +12,7 @@ const LLMS = `# CoreUI React.js documentation
 - [Multi Select](/react/docs/forms/multi-select.md): Powerful React Multi Select component.
 - [Date Range Picker](/react/docs/forms/date-range-picker.md): (PRO)
 - [Rating](/react/docs/forms/rating.md): (PRO) Star rating input.
+- [Badge](/react/docs/components/badge.md): Small count and labeling component, see (PRO) badges.
 
 ## Components
 
@@ -23,7 +24,7 @@ describe('parseLlms', () => {
   const entries = parseLlms(LLMS, '/react/docs', 'https://coreui.io')
 
   it('parses entries with section, slug, url and description', () => {
-    expect(entries).toHaveLength(5)
+    expect(entries).toHaveLength(6)
     const avatar = entries.find((entry) => entry.slug === 'components/avatar')
     expect(avatar).toMatchObject({
       title: 'Avatar',
@@ -39,6 +40,10 @@ describe('parseLlms', () => {
     const rating = entries.find((entry) => entry.slug === 'forms/rating')
     expect(rating).toMatchObject({ pro: true, description: 'Star rating input.' })
     expect(entries.find((entry) => entry.slug === 'components/avatar')?.pro).toBe(false)
+    expect(entries.find((entry) => entry.slug === 'components/badge')).toMatchObject({
+      pro: false,
+      description: 'Small count and labeling component, see (PRO) badges.',
+    })
   })
 
   it('handles entries without a description', () => {
