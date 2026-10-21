@@ -11,6 +11,8 @@ export interface ApiResult {
   markdown: string
 }
 
+const PAGE_PATH_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)+$/
+
 export class DocsService {
   private readonly catalogs = new Map<Framework, Promise<DocEntry[]>>()
   private readonly apiIndex = new Map<Framework, Promise<Record<string, unknown> | null>>()
@@ -69,20 +71,35 @@ export class DocsService {
     const entries = await this.getCatalog(framework)
     const prefix = docsPath(this.config, framework).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const normalizedSlug = slugOrUrl
+      .replace(/[?#].*$/, '')
       .replace(/^https?:\/\/[^/]+/, '')
       .replace(new RegExp(`^${prefix}/`), '')
       .replace(/\/$/, '')
       .replace(/\.md$/, '')
     const entry = entries.find((item) => item.slug === normalizedSlug) ?? resolveComponent(entries, normalizedSlug)
     if (!entry) {
-      // Pages outside llms.txt (older docs builds, pages outside the sidebar) still have a .md.
-      const res = normalizedSlug ? await this.http.get(`${docsBase(this.config, framework)}/${normalizedSlug}.md`) : null
-      if (res?.status === 200) {
-        return { markdown: res.body }
+      const markdown = await this.getPageOutsideCatalog(framework, normalizedSlug)
+      if (markdown !== null) {
+        return { markdown }
       }
       throw new Error(`No documentation page found for "${slugOrUrl}" in ${framework}`)
     }
     return { entry, markdown: await this.getPageByEntry(entry) }
+  }
+
+  // Pages outside llms.txt (older docs builds, pages outside the sidebar) still have a
+  // .md. Only a plain docs path is tried, so a component name, `..` or another host
+  // never reaches the network.
+  private async getPageOutsideCatalog(framework: Framework, slug: string): Promise<string | null> {
+    if (!PAGE_PATH_RE.test(slug)) {
+      return null
+    }
+    try {
+      const res = await this.http.get(`${docsBase(this.config, framework)}/${slug}.md`)
+      return res.status === 200 ? res.body : null
+    } catch {
+      return null
+    }
   }
 
   private async getApiIndex(framework: Framework): Promise<Record<string, unknown> | null> {

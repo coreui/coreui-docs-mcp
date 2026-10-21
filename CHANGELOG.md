@@ -16,8 +16,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - `get_doc_page` no longer fails for a page that is not in `llms.txt`, such as a
-  component's API or Styling page on an older docs build: it fetches the page's `.md`
-  directly.
+  component's Styling or Accessibility page on an older docs build: given a docs path
+  (`forms/multi-select/styling`), it fetches that page's `.md` directly. A component
+  name, a path with `..` or a URL with a `#fragment` or `?query` never reaches that
+  request.
 
 ## [0.2.0] - 2026-07-15
 

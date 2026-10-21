@@ -74,6 +74,44 @@ describe('DocsService', () => {
     expect(markdown).toBe('# Multi Select Styling')
   })
 
+  it('tries the .md only for a plain docs path', async () => {
+    const requested: string[] = []
+    const cacheDir = await mkdtemp(join(tmpdir(), 'coreui-docs-mcp-test-'))
+    const config = loadConfig(['--framework', 'react'], { COREUI_DOCS_CACHE_DIR: cacheDir } as NodeJS.ProcessEnv)
+    const recording = (async (input: string | URL) => {
+      const url = typeof input === 'string' ? input : input.toString()
+      requested.push(url)
+      return fakeFetch({ [`${base}/llms.txt`]: { body: LLMS } })(url)
+    }) as unknown as typeof fetch
+    const docs = new DocsService(config, new HttpClient({ cacheDir, ttlMs: 60_000, fetchImpl: recording }))
+    for (const page of ['CAvatarr', '../../vue/docs/components/avatar', 'forms//x', 'forms/x.y']) {
+      await expect(docs.getPage('react', page)).rejects.toThrow('No documentation page found')
+    }
+    expect(requested).toEqual([`${base}/llms.txt`])
+  })
+
+  it('drops a #fragment or ?query before looking the page up', async () => {
+    const docs = await makeService({
+      [`${base}/llms.txt`]: { body: LLMS },
+      [`${base}/components/avatar.md`]: { body: PAGE },
+    })
+    const { entry } = await docs.getPage('react', `${base}/components/avatar/#sizes`)
+    expect(entry?.slug).toBe('components/avatar')
+    expect((await docs.getPage('react', `${base}/components/avatar/?utm=x`)).entry?.slug).toBe('components/avatar')
+  })
+
+  it('reports not found when the .md request fails', async () => {
+    const cacheDir = await mkdtemp(join(tmpdir(), 'coreui-docs-mcp-test-'))
+    const config = loadConfig(['--framework', 'react'], { COREUI_DOCS_CACHE_DIR: cacheDir } as NodeJS.ProcessEnv)
+    const offline = (async (input: string | URL) => {
+      const url = typeof input === 'string' ? input : input.toString()
+      if (url.endsWith('/llms.txt')) return fakeFetch({ [url]: { body: LLMS } })(url)
+      throw new Error('fetch failed')
+    }) as unknown as typeof fetch
+    const docs = new DocsService(config, new HttpClient({ cacheDir, ttlMs: 60_000, fetchImpl: offline }))
+    await expect(docs.getPage('react', 'forms/multi-select/styling')).rejects.toThrow('No documentation page found')
+  })
+
   it('still reports a page that exists neither in llms.txt nor as a .md', async () => {
     const docs = await makeService({ [`${base}/llms.txt`]: { body: LLMS } })
     await expect(docs.getPage('react', 'forms/nothing-here')).rejects.toThrow('No documentation page found')
