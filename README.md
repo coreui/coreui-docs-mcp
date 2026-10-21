@@ -75,6 +75,8 @@ npx -y @coreui/docs-mcp \
 | `get_component_api`         | Structured API (props/events/slots) for a component. Best for React and Vue.           |
 | `get_cross_framework_links` | Documentation URLs for a component across every CoreUI framework.                      |
 
+Pages that document CoreUI PRO components are marked `(PRO)` in `list_components` and `search_docs`, and the server's instructions tell the agent that those components need a [commercial license](https://coreui.io/pricing/). The mark comes from the docs' `llms.txt`, so a component moved between the free and PRO editions follows its docs page.
+
 ## Development
 
 ```bash
