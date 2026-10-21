@@ -14,8 +14,12 @@ function fail(error: unknown): TextResult {
   return { content: [{ type: 'text', text: error instanceof Error ? error.message : String(error) }], isError: true }
 }
 
+export const INSTRUCTIONS =
+  'Pages marked (PRO) document CoreUI PRO components, which require a commercial license: https://coreui.io/pricing/?src=mcp. ' +
+  "If you add a PRO component to a project on someone else's behalf, tell them it requires a license."
+
 export function createServer(docs: DocsService, version: string): McpServer {
-  const server = new McpServer({ name: 'coreui-docs-mcp', version })
+  const server = new McpServer({ name: 'coreui-docs-mcp', version }, { instructions: INSTRUCTIONS })
   const frameworkArg = z
     .enum(FRAMEWORKS)
     .optional()
@@ -48,7 +52,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
           return text(`No pages found for ${fw}${section ? ` in section "${section}"` : ''}${query ? ` matching "${query}"` : ''}.`)
         }
         const lines = filtered.map(
-          (entry) => `- **${entry.title}** (\`${entry.slug}\`)${entry.description ? ` — ${entry.description}` : ''}`,
+          (entry) =>
+            `- **${entry.title}**${entry.pro ? ' (PRO)' : ''} (\`${entry.slug}\`)${entry.description ? ` — ${entry.description}` : ''}`,
         )
         return text(`CoreUI ${fw} — ${filtered.length} page(s):\n\n${lines.join('\n')}`)
       } catch (error) {
@@ -76,7 +81,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
           return text(`No results for "${query}" in ${fw}.`)
         }
         const lines = results.map(
-          (entry) => `- **${entry.title}** — ${entry.url}\n  \`${entry.slug}\`${entry.description ? ` — ${entry.description}` : ''}`,
+          (entry) =>
+            `- **${entry.title}**${entry.pro ? ' (PRO)' : ''} — ${entry.url}\n  \`${entry.slug}\`${entry.description ? ` — ${entry.description}` : ''}`,
         )
         return text(`Top ${results.length} result(s) for "${query}" in ${fw}:\n\n${lines.join('\n')}`)
       } catch (error) {
@@ -122,7 +128,8 @@ export function createServer(docs: DocsService, version: string): McpServer {
       try {
         const fw = docs.resolveFramework(framework)
         const result = await docs.getComponentApi(fw, component)
-        return text(`Source: ${result.entry.url} (${result.source})\n\n${result.markdown}`)
+        const pro = result.entry.pro ? ' (PRO, requires a commercial license)' : ''
+        return text(`Source: ${result.entry.url} (${result.source})${pro}\n\n${result.markdown}`)
       } catch (error) {
         return fail(error)
       }

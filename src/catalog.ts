@@ -6,10 +6,12 @@ export interface DocEntry {
   mdUrl: string
   url: string
   description: string
+  pro: boolean
 }
 
 const ENTRY_RE = /^-\s+\[(.+?)\]\((.+?)\)(?::\s*(.*))?$/
 const SECTION_RE = /^##\s+(.+?)\s*$/
+const PRO_RE = /^\(PRO\)\s*/
 
 export function parseLlms(text: string, basePath: string, origin: string): DocEntry[] {
   const prefix = `${basePath}/`
@@ -27,7 +29,7 @@ export function parseLlms(text: string, basePath: string, origin: string): DocEn
     if (!entryMatch) {
       continue
     }
-    const [, title, href, description = ''] = entryMatch
+    const [, title, href, rawDescription = ''] = entryMatch
     const path = href!.startsWith('http') ? new URL(href!).pathname : href!
     if (!path.startsWith(prefix) || !path.endsWith('.md')) {
       continue
@@ -40,7 +42,8 @@ export function parseLlms(text: string, basePath: string, origin: string): DocEn
       path,
       mdUrl: `${origin}${path}`,
       url: `${origin}${prefix}${slug}/`,
-      description: description.trim(),
+      description: rawDescription.replace(PRO_RE, '').trim(),
+      pro: PRO_RE.test(rawDescription),
     })
   }
 
