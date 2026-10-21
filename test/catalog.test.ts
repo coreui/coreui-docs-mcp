@@ -12,6 +12,7 @@ const LLMS = `# CoreUI React.js documentation
 - [Multi Select](/react/docs/forms/multi-select.md): Powerful React Multi Select component.
 - [Date Range Picker](/react/docs/forms/date-range-picker.md): (PRO)
 - [Rating](/react/docs/forms/rating.md): (PRO) Star rating input.
+  - [Rating API](/react/docs/forms/rating/api.md): (PRO) Props.
 - [Badge](/react/docs/components/badge.md): Small count and labeling component, see (PRO) badges.
 
 ## Components
@@ -24,7 +25,7 @@ describe('parseLlms', () => {
   const entries = parseLlms(LLMS, '/react/docs', 'https://coreui.io')
 
   it('parses entries with section, slug, url and description', () => {
-    expect(entries).toHaveLength(6)
+    expect(entries).toHaveLength(7)
     const avatar = entries.find((entry) => entry.slug === 'components/avatar')
     expect(avatar).toMatchObject({
       title: 'Avatar',
@@ -43,6 +44,15 @@ describe('parseLlms', () => {
     expect(entries.find((entry) => entry.slug === 'components/badge')).toMatchObject({
       pro: false,
       description: 'Small count and labeling component, see (PRO) badges.',
+    })
+  })
+
+  it('reads a sub-page nested under its component', () => {
+    expect(entries.find((entry) => entry.slug === 'forms/rating/api')).toMatchObject({
+      title: 'Rating API',
+      section: 'Forms',
+      pro: true,
+      url: 'https://coreui.io/react/docs/forms/rating/api/',
     })
   })
 

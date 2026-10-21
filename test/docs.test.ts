@@ -64,6 +64,21 @@ describe('DocsService', () => {
     expect(entries.map((entry) => entry.slug)).toContain('components/avatar')
   })
 
+  it('fetches a page missing from llms.txt straight from its .md', async () => {
+    const docs = await makeService({
+      [`${base}/llms.txt`]: { body: LLMS },
+      [`${base}/forms/multi-select/styling.md`]: { body: '# Multi Select Styling' },
+    })
+    const { entry, markdown } = await docs.getPage('react', 'forms/multi-select/styling')
+    expect(entry).toBeUndefined()
+    expect(markdown).toBe('# Multi Select Styling')
+  })
+
+  it('still reports a page that exists neither in llms.txt nor as a .md', async () => {
+    const docs = await makeService({ [`${base}/llms.txt`]: { body: LLMS } })
+    await expect(docs.getPage('react', 'forms/nothing-here')).rejects.toThrow('No documentation page found')
+  })
+
   it('retries the catalog after a transient failure instead of caching the rejection', async () => {
     const cacheDir = await mkdtemp(join(tmpdir(), 'coreui-docs-mcp-test-'))
     const config = loadConfig(['--framework', 'react'], {

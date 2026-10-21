@@ -77,6 +77,8 @@ npx -y @coreui/docs-mcp \
 
 Pages that document CoreUI PRO components are marked `(PRO)` in `list_components`, `search_docs` and `get_component_api`, and the server's instructions tell the agent that those components need a [commercial license](https://coreui.io/pricing/). The mark comes from the docs' `llms.txt`, so a component moved between the free and PRO editions follows its docs page.
 
+A component's sub-pages (API, Styling, Accessibility) are listed in `llms.txt` under the component, so `get_doc_page` finds them by slug, e.g. `forms/multi-select/styling`. A slug that is not in `llms.txt` is fetched straight from its `.md`.
+
 ## Development
 
 ```bash

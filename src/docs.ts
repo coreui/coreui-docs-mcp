@@ -75,6 +75,11 @@ export class DocsService {
       .replace(/\.md$/, '')
     const entry = entries.find((item) => item.slug === normalizedSlug) ?? resolveComponent(entries, normalizedSlug)
     if (!entry) {
+      // Pages outside llms.txt (older docs builds, pages outside the sidebar) still have a .md.
+      const res = normalizedSlug ? await this.http.get(`${docsBase(this.config, framework)}/${normalizedSlug}.md`) : null
+      if (res?.status === 200) {
+        return { markdown: res.body }
+      }
       throw new Error(`No documentation page found for "${slugOrUrl}" in ${framework}`)
     }
     return { entry, markdown: await this.getPageByEntry(entry) }
